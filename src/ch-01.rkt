@@ -68,21 +68,17 @@
      (error 'occurs-free? "Invalid lambda calculus expression ~s" lcexp))))
 
 ;; 1.2.5 subst
-;; (subst 'hi 'bye '(say (bye bye) bye)) => '(say (hi hi) hi)
+;; (subst 'hi 'bye '(say hola hi bye ((say bye) bye) bye))
 ;; Slist ::= () | (Sexp . Slist)
 ;; Sexp  ::= Symbol | Slist
 (define (subst new old slist)
   (cond ((null? slist) '())
         ((list? slist)
-         (cons (subst-in-sexp new old (car slist))
-               (subst new old (cdr slist))))
+         (let [(sexp (car slist))]
+           (cons
+            (if (symbol? sexp)
+                (if (eqv? old sexp) new sexp)
+                (subst new old sexp))
+            (subst new old (cdr slist)))))
         (else
          (error 'subst "Invalid s-list ~s" slist))))
-
-(define (subst-in-sexp new old sexp)
-  (cond ((symbol? sexp)
-         (if (eqv? old sexp) new sexp))
-        ((list? sexp)
-         (subst new old sexp))
-        (else
-         (error 'subst-in-sexp "Invalid s-expression ~s" sexp))))
