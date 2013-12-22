@@ -1,15 +1,14 @@
 #lang racket
+
 ;; 1.2.1
-;; (list-length '(a b c))
-;; => 3
+;; (list-length '(a b c)) => 3
 (define (list-length lst)
   (if (null? lst)
       0
       (+ 1 (list-length (cdr lst)))))
 
 ;; 1.2.2
-;; (nth-element '(a b c) 2)
-;; => c
+;; (nth-element '(a b c) 2) => c
 (define (nth-element lst n)
   (define (pluralize n sng plu)
     (if (= n 1) sng plu))
@@ -22,8 +21,7 @@
          (nth-element (cdr lst) (- n 1)))))
 
 ;; 1.2.3
-;; (remove-first 'b '(a b c b a))
-;; => (a c b a)
+;; (remove-first 'b '(a b c b a)) => (a c b a)
 (define (remove-first s los)
   (cond ((null? los) '())
         ((eqv? s (car los)) (cdr los))
@@ -32,7 +30,7 @@
 
 ;; 1.2.4 occurs-free?
 ;; LcExp ::= Identifier | (lambda (Identifier) LcExp) | (LcExp LcExp)
-;; Identifier ::= Symbol, where Identifier =/= lambda      
+;; Identifier ::= Symbol, where Identifier =/= lambda
 (define (bound-var lambda-exp)
     (caadr lambda-exp))
 
@@ -56,29 +54,35 @@
   (and (list? lcexp)
        (= 2 (length lcexp))))
 
-(define (occurs-free? sym lcexp)     
-  (cond 
+(define (occurs-free? sym lcexp)
+  (cond
     ((identifier? lcexp)
      (eqv? sym lcexp))
-    ((lambda? lcexp) 
-     (and (not (bound? sym lcexp)) 
+    ((lambda? lcexp)
+     (and (not (bound? sym lcexp))
           (occurs-free? sym (body lcexp))))
     ((application? lcexp)
      (or (occurs-free? sym (first lcexp))
          (occurs-free? sym (second lcexp))))
-    (else 
+    (else
      (error 'occurs-free? "Invalid lambda calculus expression ~s" lcexp))))
 
 ;; 1.2.5 subst
-;; (subst 'hi 'bye' '(say (bye bye) bye))
-;; => '(say (hi hi) hi)
-(define (subst new old lst)
-  (cond ((null? lst) '())
-        ((list? (car lst))
-         (cons (subst new old (car lst))
-               (subst new old (cdr lst))))
-        ((and (symbol? (car lst))
-              (eqv? old (car lst)))
-         (cons new (subst new old (cdr lst))))
+;; (subst 'hi 'bye '(say (bye bye) bye)) => '(say (hi hi) hi)
+;; Slist ::= () | (Sexp . Slist)
+;; Sexp  ::= Symbol | Slist
+(define (subst new old slist)
+  (cond ((null? slist) '())
+        ((list? slist)
+         (cons (subst-in-sexp new old (car slist))
+               (subst new old (cdr slist))))
         (else
-         (cons (car lst)(subst new old (cdr lst))))))
+         (error 'subst "Invalid s-list ~s" slist))))
+
+(define (subst-in-sexp new old sexp)
+  (cond ((symbol? sexp)
+         (if (eqv? old sexp) new sexp))
+        ((list? sexp)
+         (subst new old sexp))
+        (else
+         (error 'subst-in-sexp "Invalid s-expression ~s" sexp))))
