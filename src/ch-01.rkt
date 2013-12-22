@@ -82,3 +82,16 @@
             (subst new old (cdr slist)))))
         (else
          (error 'subst "Invalid s-list ~s" slist))))
+
+;; Exercise write subst by using the original (Kleene star) grammar by using map
+;; Slist ::= ({Sexp}*)
+;; Sexp  ::= Symbol | Slist
+
+(define (subst-map new old slist)
+  (letrec [(subst-in-sexp
+            (lambda (sexp)
+              (if (symbol? sexp)
+                  (if (eqv? old sexp) new sexp)
+                  (subst-map new old sexp))
+              ))]
+    (map subst-in-sexp slist)))
