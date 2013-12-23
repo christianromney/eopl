@@ -91,3 +91,38 @@
          (if (symbol? sexp)
              (if (eqv? old sexp) new sexp)
              (subst-map new old sexp))) slist))
+
+;; 1.3 number-elements
+;; (number-elements '(a b c d)) => '((0 a) (1 b) (2 c) (3 d))
+(define (number-elements-from lst n)
+  (if (null? lst) '()
+      (cons
+       (list n (car lst))
+       (number-elements-from (cdr lst) (+ 1 n)))))
+
+(define (number-elements lst)
+  (number-elements-from lst 0))
+
+(define (partial-vector-sum v n)
+  (if (zero? n)
+      (vector-ref v 0)
+      (+ (vector-ref v n)
+         (partial-vector-sum v (- n 1)))))
+
+(define (vector-sum v)
+  (let [(n (vector-length v))]
+    (if (zero? n) 0
+        (partial-vector-sum v (- n 1)))))
+
+;; 1.4 Exercises
+;; s = Symbol, n = non-negative integer
+;; lst = list, los = list of symbols
+;; loi = list of integers, slist = s-list
+;; x = any scheme value
+;; pred = predicate
+
+;; 1.15 duple: Integer x Any -> ListOf(Any)
+;; Returns a list containing n copies of x
+(define (duple n x)
+  (if (zero? n) '()
+      (cons x (duple (- n 1) x))))
