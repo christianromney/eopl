@@ -134,3 +134,19 @@
             (b (second (car lst)))]
         (cons (list b a)
               (invert (cdr lst))))))
+
+;; 1.17 down: List -> List
+;; Wrap parentheses around each top-level element in list
+(define (down lst)
+  (map list lst))
+
+;; 1.18 swapper: Symbol x Symbol x List -> List
+;; swapper exchanges all instances of symbol1 for symbol2 and vice-versa
+;; in the list
+(define (swapper a b lst)
+  (map (lambda (x)
+         (if (list? x)
+             (swapper a b x)
+             (cond ((eqv? a x) b)
+                   ((eqv? b x) a)
+                   (else x)))) lst))
