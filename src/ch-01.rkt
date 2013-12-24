@@ -126,3 +126,11 @@
 (define (duple n x)
   (if (zero? n) '()
       (cons x (duple (- n 1) x))))
+
+;; 1.16 invert: ListOf((Any Any)) -> ListOf((Any Any))
+(define (invert lst)
+  (if (null? lst) '()
+      (let [(a (first (car lst)))
+            (b (second (car lst)))]
+        (cons (list b a)
+              (invert (cdr lst))))))
