@@ -183,3 +183,49 @@
                      (+ (co-from s (car slist) acc)
                         (co-from s (cdr slist) acc))))))]
     (co-from s slist 0)))
+
+;; 1.21 product: SetOf(Symbol) x SetOf(Symbol) -> SetOf((Symbol Symbol))
+;; Cartesian product of two sets of symbols
+;; append-map is just (apply append (map f coll))
+(define (product sos1 sos2)
+  (append-map (lambda (a)
+                (map (lambda (b)
+                       (list a b)) sos2)) sos1))
+
+;; 1.22 filter-in: (Any -> bool) x List -> List
+;; Returns those elements in the list that satisfy the predicate
+;; We'll do this one the 'long way' rather than relying on the
+;; Racket/Scheme's built-in filter. I'm feeling only *slightly*
+;; guilty about product above. ;)
+(define (filter-in pred lst)
+  (if (null? lst) '()
+      (if (pred (car lst))
+          (cons (car lst)
+                (filter-in pred (cdr lst)))
+          (filter-in pred (cdr lst)))))
+
+;; Just for fun, let's do remove-in!
+(define (complement f)
+  (lambda (x) (not (f x))))
+
+(define (remove-in pred lst)
+  (filter-in (complement pred) lst))
+
+;; 1.23 list-index: (Any -> bool) x List -> Int | #f
+;; This function returns the index of the first element that satisfies
+;; the predicate, or false if none do.
+;; This is kind of ugly since the function returns an Int or
+;; bool (false). Like one of ML's datatypes...anyway, nothing says
+;; our auxiliary function has to follow this specification.
+;; We will use -1 for not found and then translate.
+(define (list-index pred lst)
+  (letrec [(index-of
+             (lambda (pred lst cur)
+               (cond ((null? lst) -1)
+                     ((pred (car lst)) cur)
+                     (else
+                      (index-of pred (cdr lst) (+ cur 1))))))
+           (is-found
+            (lambda (n)
+              (if (<= 0 n) n #f)))]
+    (is-found (index-of pred lst 0))))
