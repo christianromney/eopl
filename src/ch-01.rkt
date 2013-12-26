@@ -137,6 +137,7 @@
 
 ;; 1.17 down: List -> List
 ;; Wrap parentheses around each top-level element in list
+;; Is this cheating? We've already been introduced to map, after all...
 (define (down lst)
   (map list lst))
 
@@ -150,3 +151,35 @@
              (cond ((eqv? a x) b)
                    ((eqv? b x) a)
                    (else x)))) lst))
+
+;; 1.19 listset: List x Int x Any -> List
+;; Replaces the list item at the given index with the supplied value
+;; Here's an opportunity to observe the 'no mysterious auxiliaries' rule,
+;; but we will do a little 'software engineering' and use letrec so as
+;; not to pollute the namespace. We also avoid visiting the elements
+;; past the index (an obvious optimization).
+(define (listset lst n val)
+  (letrec [(listset-from
+            (lambda (lst n val cur)
+              (cond ((null? lst) '())
+                    ((= cur n)
+                     (cons val (cdr lst)))
+                    (else
+                     (cons (car lst)
+                           (listset-from (cdr lst) n val (+ cur 1)))))))]
+    (listset-from lst n val 0)))
+
+;; 1.20 count-occurrences: Symbol x SList -> Int
+;; Counts the occurrences of the given symbol anywhere in the SList
+(define (count-occurrences s slist)
+  (letrec [(co-from
+            (lambda (s slist acc)
+              (cond ((null? slist) acc)
+                    ((symbol? (car slist))
+                     (co-from s (cdr slist) (if (eqv? s (car slist))
+                                                (+ acc 1)
+                                                acc)))
+                    (else
+                     (+ (co-from s (car slist) acc)
+                        (co-from s (cdr slist) acc))))))]
+    (co-from s slist 0)))
