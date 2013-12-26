@@ -229,3 +229,47 @@
             (lambda (n)
               (if (<= 0 n) n #f)))]
     (is-found (index-of pred lst 0))))
+
+;; 1.24 (every? pred lst) returns #t if every element in the list
+;; satisfies the given predicate and #f otherwise.
+;; every?: (Any -> bool) x List -> bool
+;; This is one (clever?), albeit inefficient  way of writing 'every?'.
+;; Since 'and' is a macro, we have to wrap its use in a lambda.
+;; We first map the predicate across the list and then fold or reduce
+;; the resulting list with our function wrapper over 'and'. This works
+;; since any #f value will cause 'and' to return #f. It is inefficient
+;; because we cannot short-circuit upon encountering the first #f value
+;; due to the fact that the predicate is first mapped over the list
+;; indiscriminately.
+(define (every? pred lst)
+  (foldr (lambda (x y)
+           (and x y) #t (map pred lst))))
+
+;; 1.25 (exists? pred lst) returns #t if any element in the list
+;; satisfies the predicate. This could be accomplished by replacing
+;; the 'and' in every? with an 'or', but we will write this function
+;; the 'long' way-demonstrating the ability to short-circuit.
+;; exists?: (Any -> bool) x List -> bool
+(define (exists? pred lst)
+  (cond ((null? lst) #f)
+        ((pred (car lst)) #t)
+        (else
+         (exists? pred (cdr lst)))))
+
+;; 1.26 (up lst) removes a pair of parens from each top-level element
+;; up: List -> List
+;; The approach will be to introduce a tail-recursive procedure which
+;; takes an extra accumulator argument representing the structure to
+;; be returned. We will append every car of the list onto this structure.
+;; We can profit from the fact that append takes two lists to add the
+;; elements of the car to the accumulator when the car is a list.
+;; If the car is an atom then we wrap it in a list.
+(define (up lst)
+  (letrec [(to-list
+            (lambda (x)
+              (if (list? x) x (list x))))
+           (promote
+            (lambda (lst acc)
+              (if (null? lst) acc
+                  (promote (cdr lst) (append acc (to-list (car lst)))))))]
+    (promote lst '())))
