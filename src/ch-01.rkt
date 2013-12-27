@@ -459,3 +459,32 @@
                      (number-from (rson bt)
                                   (+ (max-val left) 1))))))])
     (number-from bintree 0)))
+
+;; 1.36 Write a procedure, g, such that number-elements (above)
+;; could be defined as follows in number-elements-g
+;;
+;; The key insight here is that number-elements-g 'hard-codes'
+;; the value '0' in the car of the sublist and recurs on the
+;; cdr. This means that g is only called *after* the substructure
+;; has been built.
+;;
+;; Since it has no choice but to operate on a 'completed' (but
+;; erroneously numbered) substructure, it must re-number its
+;; list before returning it. This is accomplished through
+;; an auxiliary recursive procedure with a seed value.
+;;
+;; This also means the that node index N will be renumbered
+;; N + 1 times.
+(define (g lst1 lst2)
+  (letrec ([replace-caar-from
+            (lambda (lst n)
+              (if (null? lst) '()
+                  (cons
+                   (list n (cadar lst))
+                   (replace-caar-from (cdr lst) (+ n 1)))))])
+    (replace-caar-from (cons lst1 lst2) 0)))
+
+(define (number-elements-g lst)
+  (if (null? lst) '()
+      (g (list 0 (car lst))
+         (number-elements-g (cdr lst)))))
