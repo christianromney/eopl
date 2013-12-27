@@ -12,21 +12,21 @@
 (define (nth-element lst n)
   (define (pluralize n sng plu)
     (if (= n 1) sng plu))
-  (cond ((null? lst)
+  (cond [(null? lst)
          (let ([num (+ n 1)])
            (error 'nth-element "List too short by ~s ~s"
-                  num (pluralize num 'element 'elements))))
-        ((= n 0) (car lst))
-        (else
-         (nth-element (cdr lst) (- n 1)))))
+                  num (pluralize num 'element 'elements)))]
+        [(= n 0) (car lst)]
+        [else
+         (nth-element (cdr lst) (- n 1))]))
 
 ;; 1.2.3
 ;; (remove-first 'b '(a b c b a)) => (a c b a)
 (define (remove-first s los)
-  (cond ((null? los) '())
-        ((eqv? s (car los)) (cdr los))
-        (else
-         (cons (car los) (remove-first s (cdr los))))))
+  (cond [(null? los) '()]
+        [(eqv? s (car los)) (cdr los)]
+        [else
+         (cons (car los) (remove-first s (cdr los)))]))
 
 ;; 1.2.4 occurs-free?
 ;; LcExp ::= Identifier | (lambda (Identifier) LcExp) | (LcExp LcExp)
@@ -56,32 +56,32 @@
 
 (define (occurs-free? sym lcexp)
   (cond
-    ((identifier? lcexp)
-     (eqv? sym lcexp))
-    ((lambda? lcexp)
-     (and (not (bound? sym lcexp))
-          (occurs-free? sym (body lcexp))))
-    ((application? lcexp)
-     (or (occurs-free? sym (first lcexp))
-         (occurs-free? sym (second lcexp))))
-    (else
-     (error 'occurs-free? "Invalid lambda calculus expression ~s" lcexp))))
+   [(identifier? lcexp)
+    (eqv? sym lcexp)]
+   [(lambda? lcexp)
+    (and (not (bound? sym lcexp))
+         (occurs-free? sym (body lcexp)))]
+   [(application? lcexp)
+    (or (occurs-free? sym (first lcexp))
+        (occurs-free? sym (second lcexp)))]
+   [else
+    (error 'occurs-free? "Invalid lambda calculus expression ~s" lcexp)]))
 
 ;; 1.2.5 subst
 ;; (subst 'hi 'bye '(say hola hi bye ((say bye) bye) bye))
 ;; Slist ::= () | (Sexp . Slist)
 ;; Sexp  ::= Symbol | Slist
 (define (subst new old slist)
-  (cond ((null? slist) '())
-        ((list? slist)
+  (cond [(null? slist) '()]
+        [(list? slist)
          (let ([sexp (car slist)])
            (cons
             (if (symbol? sexp)
                 (if (eqv? old sexp) new sexp)
                 (subst new old sexp))
-            (subst new old (cdr slist)))))
-        (else
-         (error 'subst "Invalid s-list ~s" slist))))
+            (subst new old (cdr slist))))]
+        [else
+         (error 'subst "Invalid s-list ~s" slist)]))
 
 ;; Exercise write subst by using the original (Kleene star) grammar by using map
 ;; Slist ::= ({Sexp}*)
@@ -148,9 +148,9 @@
   (map (lambda (x)
          (if (list? x)
              (swapper a b x)
-             (cond ((eqv? a x) b)
-                   ((eqv? b x) a)
-                   (else x)))) lst))
+             (cond [(eqv? a x) b]
+                   [(eqv? b x) a]
+                   [else x]))) lst))
 
 ;; 1.19 listset: List x Int x Any -> List
 ;; Replaces the list item at the given index with the supplied value
@@ -161,12 +161,12 @@
 (define (listset lst n val)
   (letrec ([listset-from
             (lambda (lst n val cur)
-              (cond ((null? lst) '())
-                    ((= cur n)
-                     (cons val (cdr lst)))
-                    (else
+              (cond [(null? lst) '()]
+                    [(= cur n)
+                     (cons val (cdr lst))]
+                    [else
                      (cons (car lst)
-                           (listset-from (cdr lst) n val (+ cur 1))))))])
+                           (listset-from (cdr lst) n val (+ cur 1)))]))])
     (listset-from lst n val 0)))
 
 ;; 1.20 count-occurrences: Symbol x SList -> Int
@@ -174,14 +174,14 @@
 (define (count-occurrences s slist)
   (letrec ([co-from
             (lambda (s slist acc)
-              (cond ((null? slist) acc)
-                    ((symbol? (car slist))
+              (cond [(null? slist) acc]
+                    [(symbol? (car slist))
                      (co-from s (cdr slist) (if (eqv? s (car slist))
                                                 (+ acc 1)
-                                                acc)))
-                    (else
+                                                acc))]
+                    [else
                      (+ (co-from s (car slist) acc)
-                        (co-from s (cdr slist) acc)))))])
+                        (co-from s (cdr slist) acc))]))])
     (co-from s slist 0)))
 
 ;; 1.21 product: SetOf(Symbol) x SetOf(Symbol) -> SetOf((Symbol Symbol))
@@ -221,10 +221,10 @@
 (define (list-index pred lst)
   (letrec ([index-of
             (lambda (pred lst cur)
-              (cond ((null? lst) -1)
-                    ((pred (car lst)) cur)
-                    (else
-                     (index-of pred (cdr lst) (+ cur 1)))))]
+              (cond [(null? lst) -1]
+                    [(pred (car lst)) cur]
+                    [else
+                     (index-of pred (cdr lst) (+ cur 1))]))]
            [is-found
             (lambda (n)
               (if (<= 0 n) n #f))])
@@ -251,10 +251,10 @@
 ;; the 'long' way-demonstrating the ability to short-circuit.
 ;; exists?: (Any -> bool) x List -> bool
 (define (exists? pred lst)
-  (cond ((null? lst) #f)
-        ((pred (car lst)) #t)
-        (else
-         (exists? pred (cdr lst)))))
+  (cond [(null? lst) #f]
+        [(pred (car lst)) #t]
+        [else
+         (exists? pred (cdr lst))]))
 
 ;; 1.26 (up lst) removes a pair of parens from each top-level element
 ;; up: List -> List
@@ -278,27 +278,27 @@
 ;; in order which they appear (remove all parentheses)
 ;; flatten: SList -> ListOf(Atom)
 (define (flatten slist)
-  (cond ((null? slist) '())
-        ((list? (car slist))
+  (cond [(null? slist) '()]
+        [(list? (car slist))
          (append (flatten (car slist))
-                 (flatten (cdr slist))))
-        (else
+                 (flatten (cdr slist)))]
+        [else
          (cons (car slist)
-               (flatten (cdr slist))))))
+               (flatten (cdr slist)))]))
 
 ;; 1.28 (merge loi1 loi2) given two sorted lists of integers,
 ;; returns a combined sorted list of integers made from the
 ;; elements of the two argument lists
 ;; merge: ListOf(Int) x ListOf(Int) -> ListOf(Int)
 (define (merge loi1 loi2)
-  (cond ((null? loi1) loi2)
-        ((null? loi2) loi1)
-        ((<= (car loi1) (car loi2))
+  (cond [(null? loi1) loi2]
+        [(null? loi2) loi1]
+        [(<= (car loi1) (car loi2))
          (merge (cdr loi1)
-                (cons (car loi1) loi2)))
-        (else
+                (cons (car loi1) loi2))]
+        [else
          (cons (car loi2)
-               (merge loi1 (cdr loi2))))))
+               (merge loi1 (cdr loi2)))]))
 
 ;; 1.29 (sort loi) returns the elements of loi in ascending order
 ;; sort: ListOf(Int) -> ListOf(Int)
@@ -322,14 +322,14 @@
                            (merge-sort r) '()))))]
            [merge
             (lambda (left right acc)
-              (cond ((and (null? left)
-                          (null? right)) acc)
-                    ((null? right)
-                     (merge (cdr left) right (append acc (list (car left)))))
-                    ((null? left)
-                     (merge left (cdr right) (append acc (list (car right)))))
-                    ((<= (car left) (car right))
-                     (merge (cdr left) right (append acc (list (car left)))))
-                    (else
-                     (merge left (cdr right) (append acc (list (car right)))))))])
+              (cond [(and (null? left)
+                          (null? right)) acc]
+                    [(null? right)
+                     (merge (cdr left) right (append acc (list (car left))))]
+                    [(null? left)
+                     (merge left (cdr right) (append acc (list (car right))))]
+                    [(<= (car left) (car right))
+                     (merge (cdr left) right (append acc (list (car left))))]
+                    [else
+                     (merge left (cdr right) (append acc (list (car right))))]))])
     (merge-sort loi)))
