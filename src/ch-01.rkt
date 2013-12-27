@@ -435,6 +435,13 @@
 ;; Write a procedure number-leaves which takes a bintree
 ;; and produces a bintree like the original except that
 ;; the leaves are numbered from zero.
+;;
+;; The key insight is that the right side of the node must
+;; be seeded with the next number after the max value of the
+;; left side.
+;;
+;; Also, when searching for a max value, we only need to look
+;; at the right side of interior nodes!
 (define (number-leaves bintree)
   (letrec ([max-val
             (lambda (bt)
