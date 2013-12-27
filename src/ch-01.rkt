@@ -386,7 +386,7 @@
                      (double-tree (lson bt))
                      (double-tree (rson bt)))))
 
-;; 1.33 mark-leaves-with-red-depth
+;; 1.33 mark-leaves-with-red-depth: Bintree -> Bintree
 ;; Takes a bintree and produces a new bintree of the same shape
 ;; as the original except that each leaf is marked with the
 ;; number of nodes between it and the root that contain the
@@ -406,3 +406,27 @@
                                    (mark-leaves-from (lson bt) new-depth)
                                    (mark-leaves-from (rson bt) new-depth)))))])
     (mark-leaves-from btree 0)))
+
+;; 1.34 path: Int x BinSearchTree -> ListOf(Symbol)
+;; path should take an integer, n, and a binary search tree, btree,
+;; containing n. It should return a list containing the symbols
+;; 'left' and/or 'right' that indicate how to arrive at n.
+;; If n is found at the root, it returns the empty list.
+;; BTree ::= () | (Int BTree BTree)
+(define (path num btree)
+  (letrec ([node-value
+            (lambda (bt) (car bt))]
+           [l-branch
+            (lambda (bt) (cadr bt))]
+           [r-branch
+            (lambda (bt) (caddr bt))]
+           [conj
+            (lambda (lst v) (append lst (list v)))]
+           [search
+            (lambda (n bt p)
+              (cond [(= n (node-value bt)) p]
+                    [(< n (node-value bt))
+                     (search n (l-branch bt) (conj p 'left))]
+                    [else
+                     (search n (r-branch bt) (conj p 'right))]))])
+    (search num btree '())))
