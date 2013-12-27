@@ -355,3 +355,54 @@
 ;; predicate '<'.
 (define (sort/predicate pred loi)
   (mergesort/sort pred loi))
+
+;; Exercise 1.31 bintree
+;; Bintree ::= Int | (Symbol Bintree Bintree)
+(define (leaf? bt)
+  (number? bt))
+
+(define (leaf n)
+  n)
+
+(define (interior-node s l r)
+  (list s l r))
+
+(define (lson bt)
+  (cadr bt))
+
+(define (rson bt)
+  (caddr bt))
+
+(define (contents-of bt)
+  (if (leaf? bt) bt
+      (car bt)))
+
+;; 1.32 double-tree: Bintree -> Bintree
+;; doubles all the leaf node values
+(define (double-tree bt)
+  (if (leaf? bt)
+      (leaf (* 2 (contents-of bt)))
+      (interior-node (contents-of bt)
+                     (double-tree (lson bt))
+                     (double-tree (rson bt)))))
+
+;; 1.33 mark-leaves-with-red-depth
+;; Takes a bintree and produces a new bintree of the same shape
+;; as the original except that each leaf is marked with the
+;; number of nodes between it and the root that contain the
+;; symbol 'red'
+(define (mark-leaves-with-red-depth btree)
+  (letrec ([calc
+            (lambda (bt depth)
+              (if (eqv? (contents-of bt) 'red)
+                  (+ depth 1)
+                  depth))]
+           [mark-leaves-from
+            (lambda (bt depth)
+              (let ([new-depth (calc bt depth)])
+                (if (leaf? bt)
+                    (leaf depth)
+                    (interior-node (contents-of bt)
+                                   (mark-leaves-from (lson bt) new-depth)
+                                   (mark-leaves-from (rson bt) new-depth)))))])
+    (mark-leaves-from btree 0)))
