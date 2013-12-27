@@ -430,3 +430,25 @@
                     [else
                      (search n (r-branch bt) (conj p 'right))]))])
     (search num btree '())))
+
+;; 1.35 number-leaves: Bintree -> Bintree
+;; Write a procedure number-leaves which takes a bintree
+;; and produces a bintree like the original except that
+;; the leaves are numbered from zero.
+(define (number-leaves bintree)
+  (letrec ([max-val
+            (lambda (bt)
+              (if (leaf? bt)
+                  (contents-of bt)
+                  (max-val (rson bt))))]
+           [number-from
+            (lambda (bt n)
+              (if (leaf? bt)
+                  (leaf n)
+                  (let ([left (number-from (lson bt) n)])
+                    (interior-node
+                     (contents-of bt)
+                     left
+                     (number-from (rson bt)
+                                  (+ (max-val left) 1))))))])
+    (number-from bintree 0)))
