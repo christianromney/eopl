@@ -320,16 +320,22 @@
                   (let-values [((l r) (halves lst))]
                     (merge (merge-sort l)
                            (merge-sort r) '()))))]
+           [result
+            (lambda (left right acc)
+              acc)]
+           [merge-left
+            (lambda (left right acc)
+              (merge (cdr left) right (append acc (list (car left)))))]
+           [merge-right
+            (lambda (left right acc)
+              (merge left (cdr right) (append acc (list (car right)))))]
            [merge
             (lambda (left right acc)
-              (cond [(and (null? left)
-                          (null? right)) acc]
-                    [(null? right)
-                     (merge (cdr left) right (append acc (list (car left))))]
-                    [(null? left)
-                     (merge left (cdr right) (append acc (list (car right))))]
-                    [(<= (car left) (car right))
-                     (merge (cdr left) right (append acc (list (car left))))]
-                    [else
-                     (merge left (cdr right) (append acc (list (car right))))]))])
+              (let ([merge-op
+                     (cond [(and (null? left) (null? right)) result]
+                           [(null? right) merge-left]
+                           [(null? left) merge-right]
+                           [(<= (car left) (car right)) merge-left]
+                           [else merge-right])])
+                (merge-op left right acc)))])
     (merge-sort loi)))
