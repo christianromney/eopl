@@ -13,7 +13,7 @@
   (define (pluralize n sng plu)
     (if (= n 1) sng plu))
   (cond ((null? lst)
-         (let ((num (+ n 1)))
+         (let ([num (+ n 1)])
            (error 'nth-element "List too short by ~s ~s"
                   num (pluralize num 'element 'elements))))
         ((= n 0) (car lst))
@@ -74,7 +74,7 @@
 (define (subst new old slist)
   (cond ((null? slist) '())
         ((list? slist)
-         (let [(sexp (car slist))]
+         (let ([sexp (car slist)])
            (cons
             (if (symbol? sexp)
                 (if (eqv? old sexp) new sexp)
@@ -110,7 +110,7 @@
          (partial-vector-sum v (- n 1)))))
 
 (define (vector-sum v)
-  (let [(n (vector-length v))]
+  (let ([n (vector-length v)])
     (if (zero? n) 0
         (partial-vector-sum v (- n 1)))))
 
@@ -130,8 +130,8 @@
 ;; 1.16 invert: ListOf((Any Any)) -> ListOf((Any Any))
 (define (invert lst)
   (if (null? lst) '()
-      (let [(a (first (car lst)))
-            (b (second (car lst)))]
+      (let ([a (first (car lst))]
+            [b (second (car lst))])
         (cons (list b a)
               (invert (cdr lst))))))
 
@@ -159,20 +159,20 @@
 ;; not to pollute the namespace. We also avoid visiting the elements
 ;; past the index (an obvious optimization).
 (define (listset lst n val)
-  (letrec [(listset-from
+  (letrec ([listset-from
             (lambda (lst n val cur)
               (cond ((null? lst) '())
                     ((= cur n)
                      (cons val (cdr lst)))
                     (else
                      (cons (car lst)
-                           (listset-from (cdr lst) n val (+ cur 1)))))))]
+                           (listset-from (cdr lst) n val (+ cur 1))))))])
     (listset-from lst n val 0)))
 
 ;; 1.20 count-occurrences: Symbol x SList -> Int
 ;; Counts the occurrences of the given symbol anywhere in the SList
 (define (count-occurrences s slist)
-  (letrec [(co-from
+  (letrec ([co-from
             (lambda (s slist acc)
               (cond ((null? slist) acc)
                     ((symbol? (car slist))
@@ -181,7 +181,7 @@
                                                 acc)))
                     (else
                      (+ (co-from s (car slist) acc)
-                        (co-from s (cdr slist) acc))))))]
+                        (co-from s (cdr slist) acc)))))])
     (co-from s slist 0)))
 
 ;; 1.21 product: SetOf(Symbol) x SetOf(Symbol) -> SetOf((Symbol Symbol))
@@ -219,15 +219,15 @@
 ;; our auxiliary function has to follow this specification.
 ;; We will use -1 for not found and then translate.
 (define (list-index pred lst)
-  (letrec [(index-of
-             (lambda (pred lst cur)
-               (cond ((null? lst) -1)
-                     ((pred (car lst)) cur)
-                     (else
-                      (index-of pred (cdr lst) (+ cur 1))))))
-           (is-found
+  (letrec ([index-of
+            (lambda (pred lst cur)
+              (cond ((null? lst) -1)
+                    ((pred (car lst)) cur)
+                    (else
+                     (index-of pred (cdr lst) (+ cur 1)))))]
+           [is-found
             (lambda (n)
-              (if (<= 0 n) n #f)))]
+              (if (<= 0 n) n #f))])
     (is-found (index-of pred lst 0))))
 
 ;; 1.24 (every? pred lst) returns #t if every element in the list
@@ -265,13 +265,13 @@
 ;; elements of the car to the accumulator when the car is a list.
 ;; If the car is an atom then we wrap it in a list.
 (define (up lst)
-  (letrec [(to-list
+  (letrec ([to-list
             (lambda (x)
-              (if (list? x) x (list x))))
-           (promote
+              (if (list? x) x (list x)))]
+           [promote
             (lambda (lst acc)
               (if (null? lst) acc
-                  (promote (cdr lst) (append acc (to-list (car lst)))))))]
+                  (promote (cdr lst) (append acc (to-list (car lst))))))])
     (promote lst '())))
 
 ;; 1.27 (flatten slist) returns list of symbols contained in slist
@@ -314,13 +314,13 @@
   (split-at lst (quotient (length lst) 2)))
 
 (define (sort loi)
-  (letrec [(merge-sort
+  (letrec ([merge-sort
             (lambda (lst)
               (if (< (length lst) 2) lst
                   (let-values [((l r) (halves lst))]
                     (merge (merge-sort l)
-                           (merge-sort r) '())))))
-           (merge
+                           (merge-sort r) '()))))]
+           [merge
             (lambda (left right acc)
               (cond ((and (null? left)
                           (null? right)) acc)
@@ -331,5 +331,5 @@
                     ((<= (car left) (car right))
                      (merge (cdr left) right (append acc (list (car left)))))
                     (else
-                     (merge left (cdr right) (append acc (list (car right))))))))]
+                     (merge left (cdr right) (append acc (list (car right)))))))])
     (merge-sort loi)))
