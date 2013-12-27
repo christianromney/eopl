@@ -273,3 +273,63 @@
               (if (null? lst) acc
                   (promote (cdr lst) (append acc (to-list (car lst)))))))]
     (promote lst '())))
+
+;; 1.27 (flatten slist) returns list of symbols contained in slist
+;; in order which they appear (remove all parentheses)
+;; flatten: SList -> ListOf(Atom)
+(define (flatten slist)
+  (cond ((null? slist) '())
+        ((list? (car slist))
+         (append (flatten (car slist))
+                 (flatten (cdr slist))))
+        (else
+         (cons (car slist)
+               (flatten (cdr slist))))))
+
+;; 1.28 (merge loi1 loi2) given two sorted lists of integers,
+;; returns a combined sorted list of integers made from the
+;; elements of the two argument lists
+;; merge: ListOf(Int) x ListOf(Int) -> ListOf(Int)
+(define (merge loi1 loi2)
+  (cond ((null? loi1) loi2)
+        ((null? loi2) loi1)
+        ((<= (car loi1) (car loi2))
+         (merge (cdr loi1)
+                (cons (car loi1) loi2)))
+        (else
+         (cons (car loi2)
+               (merge loi1 (cdr loi2))))))
+
+;; 1.29 (sort loi) returns the elements of loi in ascending order
+;; sort: ListOf(Int) -> ListOf(Int)
+;;
+;; Might as well do something interesting and reasonably intelligent,
+;; so here's mergesort which performs reasonably well and lends itself
+;; pretty well to the functional style.
+;;
+;; The algorithm below is a translation into Scheme of the pseudocode
+;; given for the top-down implementation using lists here:
+;; http://en.wikipedia.org/wiki/Merge_sort
+(define (halves lst)
+  (split-at lst (quotient (length lst) 2)))
+
+(define (sort loi)
+  (letrec [(merge-sort
+            (lambda (lst)
+              (if (< (length lst) 2) lst
+                  (let-values [((l r) (halves lst))]
+                    (merge (merge-sort l)
+                           (merge-sort r) '())))))
+           (merge
+            (lambda (left right acc)
+              (cond ((and (null? left)
+                          (null? right)) acc)
+                    ((null? right)
+                     (merge (cdr left) right (append acc (list (car left)))))
+                    ((null? left)
+                     (merge left (cdr right) (append acc (list (car right)))))
+                    ((<= (car left) (car right))
+                     (merge (cdr left) right (append acc (list (car left)))))
+                    (else
+                     (merge left (cdr right) (append acc (list (car right))))))))]
+    (merge-sort loi)))
