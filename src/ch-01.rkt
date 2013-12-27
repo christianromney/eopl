@@ -313,29 +313,45 @@
 (define (halves lst)
   (split-at lst (quotient (length lst) 2)))
 
+(define mergesort/sort
+  (lambda (pred lst)
+    (if (< (length lst) 2) lst
+        (let-values [((l r) (halves lst))]
+          (mergesort/merge pred
+                           (mergesort/sort pred l)
+                           (mergesort/sort pred r)
+                           '())))))
+(define mergesort/result
+  (lambda (pred left right acc)
+    acc))
+
+(define mergesort/left
+  (lambda (pred left right acc)
+    (mergesort/merge pred (cdr left) right (append acc (list (car left))))))
+
+(define mergesort/right
+  (lambda (pred left right acc)
+    (mergesort/merge pred left (cdr right) (append acc (list (car right))))))
+
+(define mergesort/merge
+  (lambda (pred left right acc)
+    (let ([merge-op
+           (cond [(and (null? left) (null? right)) mergesort/result]
+                 [(null? right) mergesort/left]
+                 [(null? left) mergesort/right]
+                 [(= (car left) (car right)) mergesort/left]
+                 [(pred (car left) (car right)) mergesort/left]
+                 [else mergesort/right])])
+      (merge-op pred left right acc))))
+
 (define (sort loi)
-  (letrec ([merge-sort
-            (lambda (lst)
-              (if (< (length lst) 2) lst
-                  (let-values [((l r) (halves lst))]
-                    (merge (merge-sort l)
-                           (merge-sort r) '()))))]
-           [result
-            (lambda (left right acc)
-              acc)]
-           [merge-left
-            (lambda (left right acc)
-              (merge (cdr left) right (append acc (list (car left)))))]
-           [merge-right
-            (lambda (left right acc)
-              (merge left (cdr right) (append acc (list (car right)))))]
-           [merge
-            (lambda (left right acc)
-              (let ([merge-op
-                     (cond [(and (null? left) (null? right)) result]
-                           [(null? right) merge-left]
-                           [(null? left) merge-right]
-                           [(<= (car left) (car right)) merge-left]
-                           [else merge-right])])
-                (merge-op left right acc)))])
-    (merge-sort loi)))
+  (mergesort/sort < loi))
+
+;; Exercise 1.30 (sort/predicate pred loi)
+;; This version of sort allows the specification of the predicate.
+;; To accomplish this, I promoted the private auxilliary mergesort functions
+;; to full-fledged namespace functions. Next, I added an extra argument
+;; to receive the predicate. Lastly, I made (sort loi) use the default
+;; predicate '<'.
+(define (sort/predicate pred loi)
+  (mergesort/sort pred loi))
