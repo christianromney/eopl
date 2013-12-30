@@ -6,7 +6,8 @@
 ;; Exercise 2.1
 ;; Implement zero, is-zero?, successor, predecessor for bigits
 ;; Then compute (bigit/factorial 10)
-(define bigit/base 16)
+
+(define bigit/base 16) ;; base 16 as in book, but works with any base
 
 (define (zero)
   '())
@@ -68,3 +69,17 @@
 (define (bigit/factorial b)
   ;; or (bigit/factorial-aps b (successor (zero)))
   (bigit/factorial-cps b (lambda (i) i)))
+
+;; Some rack unit tests for good measure
+(check-equal? (bigit/representation 258) '(2 0 1) "Right from book")
+(check-equal? (successor (successor (zero))) (bigit/representation 2) "Succ")
+(check-equal? (successor (predecessor (bigit/representation 16)))
+              (bigit/representation 16))
+(check-equal? (bigit/add (bigit/representation 17)
+                         (bigit/representation 14))
+              (bigit/representation 31) "Addition")
+(check-equal? (bigit/mult (bigit/representation 12)
+                          (bigit/representation 12))
+              (bigit/representation 144) "Multiplication")
+(check-equal? (bigit/factorial (bigit/representation 5))
+              (bigit/representation 120) "Factorial")
