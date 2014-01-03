@@ -16,3 +16,5 @@
         [(eqv? (caar env) search) (cdar env)]
         [else
          (apply-env (cdr env) search)]))
+
+(provide empty-env extend-env apply-env)

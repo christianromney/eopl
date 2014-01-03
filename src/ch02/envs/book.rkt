@@ -15,3 +15,5 @@
              (apply-env (cadddr env) search))]
         [else
          (eopl:error 'apply-env "Invalid environment ~s" env)]))
+
+(provide empty-env extend-env apply-env)
