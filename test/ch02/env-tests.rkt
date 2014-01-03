@@ -1,6 +1,6 @@
 #lang racket
 (require rackunit
-         "../../src/ch02/envs/book.rkt")
+         "../../src/ch02/envs/closure.rkt")
 
 (define env-a
    (extend-env 'x 10
