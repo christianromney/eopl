@@ -1,0 +1,116 @@
+#+title: Chapter 2 Written Exercises
+
+* Exercise 2.1
+
+Implement zero, is-zero?, successor, predecessor for bigits
+Then compute (! 10)
+
+** Question: How does execution time vary as the argument changes?
+
+Incrementing the argument by 1 incurs an approximate 10-fold increase in running time.
+
+Base 16 timings:
+
+#+begin_src racket
+
+(time (! (base10->bigit 9)))  ;; ~ 89 ms
+(time (! (base10->bigit 10))) ;; ~ 859 ms
+(time (! (base10->bigit 11))) ;; ~ 9316 ms
+(time (! (base10->bigit 12))) ;; ~ 113684 ms
+
+#+end_src
+
+** Question: How does the execution time vary as the base changes?
+
+Base 32 timings:
+
+#+begin_src racket
+
+(time (! (base10->bigit 9)))  ;; ~ 95 ms
+(time (! (base10->bigit 10))) ;; ~ 825 ms
+(time (! (base10->bigit 11))) ;; 9094 ms
+(time (! (base10->bigit 12))) ;; 109858 ms
+
+#+end_src
+
+Base 64 timings:
+
+#+begin_src racket
+
+(time (! (base10->bigit 9)))  ;; 86 ms
+(time (! (base10->bigit 10))) ;; 839 ms
+(time (! (base10->bigit 11))) ;; 8936 ms
+(time (! (base10->bigit 12))) ;; 108565 ms
+
+#+end_src
+
+/Answer: Base has no appreciable effect on running time/
+
+The running time is a function of the order of growth of the
+algorithms used to implement the bigits. Factorial grows exponentially
+with respect to the size of the numbers being computed.
+
+
+
+* Exercise 2.2
+
+Analyze each of these proposed representations critically.
+
+*** Question: To what extent do they succeed or fail in satisfying the specification of the data type?
+
+[TODO]
+
+* Exercise 2.3
+
+Define a representation of all the integers (negative and nonnegative)
+as diff-trees, where a diff-tree is a list defined by the grammar
+
+  Diff-tree ::= (one) | (diff Diff-tree Diff-tree)
+
+(one) represents 1
+
+if t1 represents n1 and t2 represents n2, then (diff t1 t2) represents n1 - n2
+
+** 2.3.1 Show that every number has an infinite number of representations
+
+[TODO]
+
+** 2.3.2 Turn this representation
+
+See src/ch02/diff-tree/diff-tree.rkt
+
+** 2.3.3 Write a procedure, diff-tree-plus, that does addition in constant time.
+
+See src/ch02/diff-tree/diff-tree.rkt
+
+* Exercise 2.4 [**]
+
+Consider the data type of stacks of values, with an interface consisting
+of the procedures empty-stack, push, pop, top, and empty-stack?. Write a specification
+for these operations in the style of the example above.
+Which operations are constructors and which are observers?
+
+
+#+begin_src
+(empty-stack)          = ⎡∅⎤
+(push v ⎡s⎤)          = ⎡t⎤
+(pop ⎡t⎤)             = ⎡s⎤
+(top ⎡t⎤)             = v
+(empty-stack? ⎡s⎤)    = #t if ⎡s⎤ = ⎡∅⎤, #f otherwise
+
+empty-stack, push, pop are constructors
+top, empty-stack? are observers
+#+end_src
+
+* Exercise 2.5
+
+Implement environments using an association list representation.
+
+See src/ch02/envs/alist.rkt
+
+* Exercise 2.6
+
+Invent at least 3 different representations of the environment
+interface and implement them.
+
+[TODO]
