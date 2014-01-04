@@ -6,6 +6,9 @@
 (define (zero)
   '())
 
+(define (one)
+  (successor (zero)))
+
 (define (is-zero? b)
   (null? b))
 
@@ -44,15 +47,18 @@
 
 ;; Need addition to do multiplication
 (define (add a b)
-  (if (is-zero? a) b
-      (add (predecessor a)
-           (successor b))))
+  (cond [(is-zero? a) b]
+        [(is-zero? b) a]
+        [else
+         (add (predecessor a)
+              (successor b))]))
 
 ;; Need multiplication to do factorial
 (define (mult a b)
   (cond [(or (is-zero? a)
              (is-zero? b)) (zero)]
-        [(equal? (successor (zero)) a) b]
+        [(equal? (one) a) b]
+        [(equal? (one) b) a]
         [else
          (add b (mult (predecessor a) b))]))
 
