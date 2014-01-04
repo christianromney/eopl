@@ -21,6 +21,11 @@
   (test-equal? "Lookup nested bound var"
                (apply-env env-a 'y) 1)
 
-  (test-exn "No binding" exn?
+  (test-exn "Invalid environment" exn?
+            (lambda ()
+              (apply-env
+               (extend-env 'a 1 "I-am-an-invalid-env") 'b)))
+
+  (test-exn "No binding found" exn?
             (lambda ()
               (apply-env env-a 'z)))))

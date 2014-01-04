@@ -16,6 +16,6 @@
                      (if (eqv? var search) val
                          (apply-env saved search)))
          (else
-          (eopl:error 'apply-env "Invalid environment"))))
+          (eopl:error 'apply-env "Invalid environment ~s" e))))
 
 (provide empty-env extend-env apply-env)

@@ -11,6 +11,8 @@
         (apply-env env search))))
 
 (define (apply-env env search)
-  (env search))
+  (if (procedure? env)
+      (env search)
+      (eopl:error "Invalid environment ~s" env)))
 
 (provide empty-env extend-env apply-env)
