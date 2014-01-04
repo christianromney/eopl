@@ -1,7 +1,7 @@
 #lang racket
 (require rackunit
          rackunit/text-ui
-         "../../src/ch02/envs/closure.rkt")
+         "../../src/ch02/envs/datatype.rkt")
 
 (define env-a
   (extend-env
