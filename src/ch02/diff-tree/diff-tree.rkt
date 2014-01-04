@@ -60,3 +60,5 @@
                         (negative-n n (zero)))]
           [else
            (negative-n (* -1 n) (zero))])))
+
+(provide base10->diff-tree diff-tree->base10 zero is-zero? predecessor successor plus)

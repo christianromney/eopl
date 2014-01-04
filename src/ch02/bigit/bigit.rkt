@@ -1,8 +1,5 @@
 #lang racket
 
-(require racket/trace
-         rackunit)
-
 (define bigit/base 16) ;; base 16 as in book, but works with any base
 
 ;; *** Integer Interface ***
