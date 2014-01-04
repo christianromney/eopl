@@ -3,6 +3,11 @@
 ;; This is the first implementation given in the book
 (define (empty-env) '(empty-env))
 
+(define (empty-env? env)
+  (and (list? env)
+       (= 1 (length env))
+       (eqv? 'empty-env (car env))))
+
 (define (extend-env var val env)
   (list 'extend-env var val env))
 
@@ -16,4 +21,4 @@
         [else
          (eopl:error 'apply-env "Invalid environment ~s" env)]))
 
-(provide empty-env extend-env apply-env)
+(provide empty-env extend-env apply-env empty-env?)

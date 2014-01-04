@@ -4,6 +4,9 @@
 (define (empty-env)
   '())
 
+(define (empty-env? env)
+  (null? env))
+
 (define (extend-env var val env)
   (cons (cons var val) env))
 
@@ -17,4 +20,4 @@
         [else
          (apply-env (cdr env) search)]))
 
-(provide empty-env extend-env apply-env)
+(provide empty-env extend-env apply-env empty-env?)

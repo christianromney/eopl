@@ -7,6 +7,10 @@
 (define (empty-env)
   (hash))
 
+(define (empty-env? env)
+  (and (hash? env)
+       (zero? (hash-count env))))
+
 (define (extend-env var val saved)
   (hash-set saved var val))
 
@@ -18,4 +22,4 @@
            (error 'apply-env "Invalid environment ~s" env)]
           [else ans])))
 
-(provide empty-env extend-env apply-env)
+(provide empty-env extend-env apply-env empty-env?)

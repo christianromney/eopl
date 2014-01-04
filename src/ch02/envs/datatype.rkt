@@ -18,4 +18,9 @@
          (else
           (eopl:error 'apply-env "Invalid environment ~s" e))))
 
-(provide empty-env extend-env apply-env)
+(define (empty-env? e)
+  (cases env e
+         (empty-env () #t)
+         (extend-env (var val saved) #f)))
+
+(provide empty-env extend-env apply-env empty-env?)
