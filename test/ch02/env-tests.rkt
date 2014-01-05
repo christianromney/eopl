@@ -5,7 +5,8 @@
          (prefix-in b/ "../../src/ch02/envs/book.rkt")
          (prefix-in c/ "../../src/ch02/envs/closure.rkt")
          (prefix-in d/ "../../src/ch02/envs/datatype.rkt")
-         (prefix-in h/ "../../src/ch02/envs/hash.rkt"))
+         (prefix-in h/ "../../src/ch02/envs/hash.rkt")
+         (prefix-in r/ "../../src/ch02/envs/ribcage.rkt"))
 
 ;; Macro for running the test suite against multiple implementations
 (define-syntax run-for-all
@@ -53,7 +54,8 @@
               (b/apply-env b/extend-env b/empty-env b/empty-env?)
               (c/apply-env c/extend-env c/empty-env c/empty-env?)
               (d/apply-env d/extend-env d/empty-env d/empty-env?)
-              (h/apply-env h/extend-env h/empty-env h/empty-env?)))
+              (h/apply-env h/extend-env h/empty-env h/empty-env?)
+              (r/apply-env r/extend-env r/empty-env r/empty-env?)))
 
 (define (has-binding-tests has-fn extend-fn empty-fn)
   (let ([e (extend-fn
@@ -79,7 +81,8 @@
              ((a/has-binding? a/extend-env a/empty-env)
               (b/has-binding? b/extend-env b/empty-env)
               (d/has-binding? d/extend-env d/empty-env)
-              (h/has-binding? h/extend-env h/empty-env)))
+              (h/has-binding? h/extend-env h/empty-env)
+              (r/has-binding? r/extend-env r/empty-env)))
 
 (define (extend-env*-tests apply-fn ext*-fn empty-fn)
   (let ([e (ext*-fn '(a b c) '(1 2 3) (empty-fn))])
@@ -98,5 +101,6 @@
 
 ;; Only the association list has extend-env* as of
 ;; Exercise 2.10
-(run-tests
- (extend-env*-tests a/apply-env a/extend-env* a/empty-env))
+(run-for-all extend-env*-tests
+             ((a/apply-env a/extend-env* a/empty-env)
+              (r/apply-env r/extend-env* r/empty-env)))
