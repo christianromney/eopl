@@ -10,6 +10,13 @@
 (define (extend-env var val env)
   (cons (cons var val) env))
 
+(define (extend-env* vars vals saved)
+  (if (null? vars) saved
+      (extend-env* (cdr vars)
+                   (cdr vals)
+                   (extend-env (car vars)
+                               (car vals) saved))))
+
 (define (apply-env env search)
   (cond [(null? env)
          (eopl:error 'apply-env "No binding found for ~s" search)]
@@ -20,4 +27,10 @@
         [else
          (apply-env (cdr env) search)]))
 
-(provide empty-env extend-env apply-env empty-env?)
+(define (has-binding? env s)
+  (cond [(null? env) #f]
+        [(eqv? s (caar env)) #t]
+        [else
+         (has-binding? (cdr env) s)]))
+
+(provide empty-env extend-env apply-env empty-env? has-binding? extend-env*)

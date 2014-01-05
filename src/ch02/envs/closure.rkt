@@ -1,5 +1,9 @@
 #lang eopl
 
+;; This language cannot provide has-binding? because although
+;; it has a means of raising an eopl:error, it has no means
+;; for handling one.
+
 (define (empty-env)
   (lambda (search)
     (if (eqv? search 'empty-env/empty-env?) #t

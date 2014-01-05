@@ -22,4 +22,7 @@
            (error 'apply-env "Invalid environment ~s" env)]
           [else ans])))
 
-(provide empty-env extend-env apply-env empty-env?)
+(define (has-binding? env s)
+  (hash-has-key? env s))
+
+(provide empty-env extend-env apply-env empty-env? has-binding?)

@@ -23,4 +23,11 @@
          (empty-env () #t)
          (extend-env (var val saved) #f)))
 
-(provide empty-env extend-env apply-env empty-env?)
+(define (has-binding? e s)
+  (cases env e
+         (empty-env () #f)
+         (extend-env (var val saved)
+                     (if (eqv? var s) #t
+                         (has-binding? saved s)))))
+
+(provide empty-env extend-env apply-env empty-env? has-binding?)

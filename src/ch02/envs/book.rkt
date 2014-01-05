@@ -21,4 +21,12 @@
         [else
          (eopl:error 'apply-env "Invalid environment ~s" env)]))
 
-(provide empty-env extend-env apply-env empty-env?)
+(define (has-binding? env s)
+  (cond [(eqv? 'empty-env (car env)) #f]
+        [(eqv? 'extend-env (car env))
+         (if (eqv? (cadr env) s) #t
+             (has-binding? (cadddr env) s))]
+        [else
+         (eopl:error 'has-binding? "Invalid environment ~s" env)]))
+
+(provide empty-env extend-env apply-env empty-env? has-binding?)
