@@ -12,6 +12,20 @@
       "Recognize the empty stack"
       (empty-stack? (empty-stack)))
 
+     (test-exn
+      "Can't read top of empty stack" exn?
+      (lambda ()
+        (top (empty-stack))))
+
+     (test-exn
+      "Can't pop empty stack" exn?
+      (lambda ()
+        (pop (empty-stack))))
+
+     (test-true
+      "Recognize arriving at empty stack"
+      (empty-stack? (pop (pop t))))
+
      (test-equal?
       "Last value pushed should be the top"
       (top t) 4)
