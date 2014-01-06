@@ -9,13 +9,16 @@
          (prefix-in r/ "../../src/ch02/envs/ribcage.rkt"))
 
 ;; Macro for running the test suite against multiple implementations
+
 (define-syntax run-for-all
   (syntax-rules ()
     [(_ suite ((f ...) ...))
      (begin
        (run-tests (suite f ...)) ...)]))
 
-;; Define the test suite
+
+;; **** apply-env, extend-env, empty-env, empty-env? ****
+
 (define (base-test-suite apply-fn extend-fn empty-fn empty-pred)
   (let ([env-a (extend-fn
                 'x 10
@@ -48,7 +51,6 @@
                (lambda ()
                  (apply-fn env-a 'z))))))
 
-;; Run all the tests
 (run-for-all base-test-suite
              ((a/apply-env a/extend-env a/empty-env a/empty-env?)
               (b/apply-env b/extend-env b/empty-env b/empty-env?)
@@ -56,6 +58,9 @@
               (d/apply-env d/extend-env d/empty-env d/empty-env?)
               (h/apply-env h/extend-env h/empty-env h/empty-env?)
               (r/apply-env r/extend-env r/empty-env r/empty-env?)))
+
+
+;; **** has-binding? ****
 
 (define (has-binding-tests has-fn extend-fn empty-fn)
   (let ([e (extend-fn
@@ -75,14 +80,15 @@
      (test-false "Bogus binding not found"
                  (has-fn e 'z)))))
 
-;; The closure-based implementation (c/XXX) does not
-;; support has-binding?
 (run-for-all has-binding-tests
              ((a/has-binding? a/extend-env a/empty-env)
               (b/has-binding? b/extend-env b/empty-env)
               (d/has-binding? d/extend-env d/empty-env)
               (h/has-binding? h/extend-env h/empty-env)
               (r/has-binding? r/extend-env r/empty-env)))
+
+
+;; **** extend-env* ****
 
 (define (extend-env*-tests apply-fn ext*-fn empty-fn)
   (let ([e (ext*-fn '(a b c) '(1 2 3) (empty-fn))])
@@ -99,8 +105,6 @@
                           (lambda ()
                             (apply-fn e 'z))))))
 
-;; Only the association list has extend-env* as of
-;; Exercise 2.10
 (run-for-all extend-env*-tests
              ((a/apply-env a/extend-env* a/empty-env)
               (r/apply-env r/extend-env* r/empty-env)))
