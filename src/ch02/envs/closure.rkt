@@ -1,27 +1,37 @@
 #lang eopl
 
-;; This language cannot provide has-binding? because although
-;; it has a means of raising an eopl:error, it has no means
-;; for handling one.
-
 (define (empty-env)
-  (lambda (search)
-    (if (eqv? search 'empty-env/empty-env?) #t
-        (eopl:error 'apply-env "No binding found for ~s" search))))
+  (lambda (method)
+    (cond [(eqv? method 'apply-env)
+           (lambda (s)
+             (eopl:error 'apply-env "No binding found for ~s" s))]
+          [(eqv? method 'empty-env?)
+           (lambda () #t)]
+          [(eqv? method 'has-binding?)
+           (lambda (s) #f)])))
 
 (define (empty-env? env)
-  (apply-env env 'empty-env/empty-env?))
+  ((env 'empty-env?)))
+
+(define (has-binding? env s)
+  ((env 'has-binding?) s))
 
 (define (extend-env var val env)
-  (lambda (search)
-    (cond [(eqv? search 'empty-env/empty-env?) #f]
-          [(eqv? search var) val]
-          [else
-           (apply-env env search)])))
+  (lambda (method)
+    (cond [(eqv? method 'empty-env?)
+           (lambda () #f)]
+          [(eqv? method 'has-binding?)
+           (lambda (s)
+             (if (eqv? var s) #t
+                 (has-binding? env s)))]
+          [(eqv? method 'apply-env)
+           (lambda (s)
+             (if (eqv? s var) val
+                 (apply-env env s)))])))
 
 (define (apply-env env search)
   (if (procedure? env)
-      (env search)
+      ((env 'apply-env) search)
       (eopl:error "Invalid environment ~s" env)))
 
-(provide empty-env extend-env apply-env empty-env?)
+(provide empty-env extend-env apply-env empty-env? has-binding?)

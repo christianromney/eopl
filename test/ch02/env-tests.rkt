@@ -83,6 +83,7 @@
 (run-for-all has-binding-tests
              ((a/has-binding? a/extend-env a/empty-env)
               (b/has-binding? b/extend-env b/empty-env)
+              (c/has-binding? c/extend-env c/empty-env)
               (d/has-binding? d/extend-env d/empty-env)
               (h/has-binding? h/extend-env h/empty-env)
               (r/has-binding? r/extend-env r/empty-env)))
