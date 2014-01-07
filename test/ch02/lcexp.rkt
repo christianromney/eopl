@@ -1,7 +1,7 @@
 #lang racket
 (require rackunit
          rackunit/text-ui
-         "../../src/ch02/lcexp/lcexp.rkt")
+         "../../src/ch02/lcexp/shorthand.rkt")
 
 (define lambda-calc-suite
   (let ([lam (lambda-exp 'x (app-exp (var-exp 'even?)
