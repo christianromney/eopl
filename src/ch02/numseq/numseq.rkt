@@ -2,7 +2,7 @@
 
 ;; Private implementation functions
 
-(define (empty-seq)
+(define (empty-list)
   '())
 
 (define (prev-list s)
@@ -42,8 +42,8 @@
 
 (define (number->sequence n)
   (make-numseq n
-        (empty-seq)
-        (empty-seq)))
+        (empty-list)
+        (empty-list)))
 
 (define (current-element s)
   (car s))
