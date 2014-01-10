@@ -3,7 +3,7 @@
          rackunit/text-ui
          "../test-helper.rkt"
          (prefix-in b/ "../../src/ch02/bintree/bintree.rkt")
-         (prefix-in n/ "../../src/ch02/bintree/node.rkt"))
+         (prefix-in p/ "../../src/ch02/bintree/bintree-parent.rkt"))
 
 (define (bintree-test-suite num->tree current
                             move-left move-right
@@ -56,47 +56,47 @@
                b/insert-to-right
                b/at-leaf?)
 
-              (n/number->bintree
-               n/current-element
-               n/move-to-left
-               n/move-to-right
-               n/insert-to-left
-               n/insert-to-right
-               n/at-leaf?)))
+              (p/number->bintree
+               p/current-element
+               p/move-to-left
+               p/move-to-right
+               p/insert-to-left
+               p/insert-to-right
+               p/at-leaf?)))
 
 (define node-test-suite
-  (let ([t2 (n/insert-to-right
+  (let ([t2 (p/insert-to-right
              14
-             (n/insert-to-left
+             (p/insert-to-left
               12
-              (n/number->bintree 13)))])
+              (p/number->bintree 13)))])
     (test-suite
      "Exercise 2.20 tests move-up and at-root?"
 
      (test-true
       "Recognize the root"
-      (n/at-root? t2))
+      (p/at-root? t2))
 
      (test-false
       "left child is not root"
-      (n/at-root? (n/move-to-left t2)))
+      (p/at-root? (p/move-to-left t2)))
 
      (test-false
       "right child is not root"
-      (n/at-root? (n/move-to-right t2)))
+      (p/at-root? (p/move-to-right t2)))
 
      (test-equal?
       "come back from left excursion"
-      (n/current-element
-       (n/move-up
-        (n/move-to-left t2)))
-      (n/current-element t2))
+      (p/current-element
+       (p/move-up
+        (p/move-to-left t2)))
+      (p/current-element t2))
 
      (test-equal?
       "come back from right excursion"
-      (n/current-element
-       (n/move-up
-        (n/move-to-right t2)))
-      (n/current-element t2)))))
+      (p/current-element
+       (p/move-up
+        (p/move-to-right t2)))
+      (p/current-element t2)))))
 
 (run-tests node-test-suite)
