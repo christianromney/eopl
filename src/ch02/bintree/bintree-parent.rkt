@@ -1,5 +1,19 @@
 #lang eopl
 
+;; Exercise 2.20
+;;
+;; This representation of binary trees of integers is based
+;; on a "logical" notion of binary in that there are left
+;; and right children and the left nodes are less than the
+;; current node.
+;;
+;; However, the internal represntation also maintains a
+;; reference to the parent node as the last member of
+;; the list.
+;;
+;; Bintree ::= () | (Int Bintree Bintree Bintree)
+;;                       Left    Right   Parent
+;;
 ;; Internal functions
 
 (define (make-leaf)
