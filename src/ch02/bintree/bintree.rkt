@@ -2,8 +2,8 @@
 
 (provide number->bintree
          current-element
-         move-to-left-son
-         move-to-right-son
+         move-to-left
+         move-to-right
          at-leaf?
          insert-to-left
          insert-to-right)
@@ -37,22 +37,22 @@
 (define (current-element b)
   (car b))
 
-(define (move-to-left-son b)
+(define (move-to-left b)
   (cadr b))
 
-(define (move-to-right-son b)
+(define (move-to-right b)
   (caddr b))
 
 (define (insert-to-left n b)
-  (let ([old-item (move-to-left-son b)])
+  (let ([old-item (move-to-left b)])
     (make-bintree
      (current-element b)
      (number+son->bintree n old-item)
-     (move-to-right-son b))))
+     (move-to-right b))))
 
 (define (insert-to-right n b)
-  (let ([old-item (move-to-right-son b)])
+  (let ([old-item (move-to-right b)])
     (make-bintree
      (current-element b)
-     (move-to-left-son b)
+     (move-to-left b)
      (number+son->bintree n old-item))))
