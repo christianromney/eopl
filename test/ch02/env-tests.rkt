@@ -1,21 +1,13 @@
 #lang racket
 (require rackunit
          rackunit/text-ui
+         "../test-helper.rkt"
          (prefix-in a/ "../../src/ch02/envs/alist.rkt")
          (prefix-in b/ "../../src/ch02/envs/book.rkt")
          (prefix-in c/ "../../src/ch02/envs/closure.rkt")
          (prefix-in d/ "../../src/ch02/envs/datatype.rkt")
          (prefix-in h/ "../../src/ch02/envs/hash.rkt")
          (prefix-in r/ "../../src/ch02/envs/ribcage.rkt"))
-
-;; Macro for running the test suite against multiple implementations
-
-(define-syntax run-for-all
-  (syntax-rules ()
-    [(_ suite ((f ...) ...))
-     (begin
-       (run-tests (suite f ...)) ...)]))
-
 
 ;; **** apply-env, extend-env, empty-env, empty-env? ****
 
