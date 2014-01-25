@@ -103,15 +103,28 @@
 (run-tests node-test-suite)
 
 
-(define (bt-to-list-suite leaf interior bintree->list)
-  (let [(bt (interior 'a (leaf 3) (leaf 4)))]
+(define (bt-datatype-suite leaf interior bintree->list max)
+  (let* ([bt (interior 'a (leaf 3) (leaf 4))]
+         [tree-1 (interior 'foo (leaf 2) (leaf 3))]
+         [tree-2 (interior 'bar (leaf -1) tree-1)]
+         [tree-3 (interior 'baz tree-2 (leaf 1))])
+
     (test-suite
-     "Test the representation from Exercise 2.24"
+     "Test the exercises from the end of chapter 2"
+
      (test-equal?
-      "book sample should be recognized"
+      "book sample for bintree-to-list"
 
       (bintree->list bt)
-      '(interior-node a (leaf-node 3) (leaf-node 4))))))
+      '(interior-node a (leaf-node 3) (leaf-node 4)))
 
-(run-for-all bt-to-list-suite
-             ((d/leaf-node d/interior-node d/bintree-to-list)))
+     (test-equal?
+      "first sample for max-interior"
+      (max tree-2) 'foo)
+
+     (test-equal?
+      "second sample for max-interior"
+      (max tree-3) 'baz))))
+
+(run-for-all bt-datatype-suite
+             ((d/leaf-node d/interior-node d/bintree-to-list d/max-interior)))
