@@ -1,9 +1,11 @@
 #lang racket
 (require rackunit
          rackunit/text-ui
-         "../../src/ch02/stack/stack.rkt")
+         "../test-helper.rkt"
+         (prefix-in l/ "../../src/ch02/stack/stack.rkt")
+         (prefix-in d/ "../../src/ch02/stack/datatype.rkt"))
 
-(define stack-suite
+(define (stack-suite empty-stack empty-stack? push pop top)
   (let ([t (push 4 (push 3 (empty-stack)))])
     (test-suite
      "Tests for the stack interface"
@@ -35,4 +37,6 @@
       (let ([s (pop t)])
         (top s)) 3))))
 
-(run-tests stack-suite)
+(run-for-all stack-suite
+             ((l/empty-stack l/empty-stack? l/push l/pop l/top)
+              (d/empty-stack d/empty-stack? d/push d/pop d/top)))
