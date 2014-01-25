@@ -2,10 +2,14 @@
 
 ;; Straight from p.46 of book
 
+(define (valid-var? v)
+  (and (symbol? v)
+       (not (eq? v 'lambda))))
+
 ;; constructors
 (define-datatype lc-exp lc-exp?
-  (var-exp (var identifier?))
-  (lambda-exp (bound-var identifier?)
+  (var-exp (var valid-var?))
+  (lambda-exp (bound-var valid-var?)
               (body lc-exp?))
   (app-exp (rator lc-exp?)
            (rand lc-exp?)))
