@@ -3,7 +3,8 @@
          rackunit/text-ui
          "../test-helper.rkt"
          (prefix-in b/ "../../src/ch02/bintree/bintree.rkt")
-         (prefix-in p/ "../../src/ch02/bintree/bintree-parent.rkt"))
+         (prefix-in p/ "../../src/ch02/bintree/bintree-parent.rkt")
+         (prefix-in d/ "../../src/ch02/bintree/datatype.rkt"))
 
 (define (bintree-test-suite num->tree current
                             move-left move-right
@@ -100,3 +101,17 @@
       (p/current-element t2)))))
 
 (run-tests node-test-suite)
+
+
+(define (bt-to-list-suite leaf interior bintree->list)
+  (let [(bt (interior 'a (leaf 3) (leaf 4)))]
+    (test-suite
+     "Test the representation from Exercise 2.24"
+     (test-equal?
+      "book sample should be recognized"
+
+      (bintree->list bt)
+      '(interior-node a (leaf-node 3) (leaf-node 4))))))
+
+(run-for-all bt-to-list-suite
+             ((d/leaf-node d/interior-node d/bintree-to-list)))
