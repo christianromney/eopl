@@ -103,7 +103,7 @@
 (run-tests node-test-suite)
 
 
-(define (bt-datatype-suite leaf interior bintree->list max)
+(define (bt-datatype-suite leaf interior bintree->list max sum)
   (let* ([bt (interior 'a (leaf 3) (leaf 4))]
          [tree-1 (interior 'foo (leaf 2) (leaf 3))]
          [tree-2 (interior 'bar (leaf -1) tree-1)]
@@ -119,6 +119,18 @@
       '(interior-node a (leaf-node 3) (leaf-node 4)))
 
      (test-equal?
+      "sum of tree 1"
+      (sum tree-1) 5)
+
+     (test-equal?
+      "sum of tree 2"
+      (sum tree-2) 4)
+
+     (test-equal?
+      "sum of tree 3"
+      (sum tree-3) 5)
+
+     (test-equal?
       "first sample for max-interior"
       (max tree-2) 'foo)
 
@@ -127,4 +139,4 @@
       (max tree-3) 'baz))))
 
 (run-for-all bt-datatype-suite
-             ((d/leaf-node d/interior-node d/bintree-to-list d/max-interior)))
+             ((d/leaf-node d/interior-node d/bintree-to-list d/max-interior d/leaf-sum)))

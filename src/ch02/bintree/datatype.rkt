@@ -26,7 +26,7 @@
   (cases bintree bt
          (interior-node (key l r) key)
          (leaf-node (_)
-          (eopl:error 'node-key "Leaf node has no key"))))
+                    (eopl:error 'node-key "Leaf node has no key"))))
 
 (define (leaf-node? bt)
   (cases bintree bt
@@ -45,22 +45,18 @@
           (eopl:error 'max-interior "Must be passed an interior-node"))
 
          (interior-node
-          (_ left right)
-          (let [(l (leaf-sum left))
-                (r (leaf-sum right))]
+          (this left right)
+          (let* ([l (leaf-sum left)]
+                 [r (leaf-sum right)]
+                 [b (leaf-sum bt)])
             (cond [(and (leaf-node? left)
-                        (interior-node? right))
-                   (node-key right)]
-
-                  [(and (leaf-node? right)
-                        (interior-node? left))
-                   (node-key left)]
-
-                  [(and (leaf-node? left)
                         (leaf-node? right))
                    (eopl:error 'max-interior "Must have at least 1 interior-node")]
+                  [(< l r)
+                   (if (< b r)
+                       (node-key right) this)]
+                  [else
+                   (if (< b l)
+                       (node-key left) this)])))))
 
-                  [(< l r) (node-key right)]
-                  [else (node-key left)])))))
-
-(provide leaf-node interior-node bintree-to-list max-interior)
+(provide leaf-node leaf-sum interior-node bintree-to-list max-interior)
