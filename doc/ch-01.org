@@ -1,0 +1,71 @@
+#+TITLE: EOPL: Chapter 1 Notes & Exercises
+#+OPTIONS: num:nil toc:nil
+#+HTML_HEAD: <link rel="stylesheet" href="http://dakrone.github.io/org.css" type="text/css" />
+* Notes
+
+** Sets
+
+*** Set Notation
+\begin{equation}
+\large
+N=\{0, 1, 2 \ldots\}
+\end{equation}
+
+
+*** Inductive specification
+**** Recursive definition of sets
+**** Definition 1.1.1 : Top-down Definition
+
+A natural number, n, is in S if and only if:
+
+\begin{equation}
+\\
+\large
+n = 0,\hspace{3pt} or
+\\
+\large
+n - 3 \in 󠁳S
+\\
+\end{equation}
+
+
+**** Definition 1.1.2 : Bottom-up Definition
+S is defined to be the smallest set contained in N satisfying
+
+\begin{equation}
+\\
+\large
+0 \in S
+\\
+\large
+if\hspace{3pt} n \in S,\hspace{6pt} then\hspace{3pt} n + 3 \in S
+\\
+\end{equation}
+
+
+**** Rules of Inference Version
+\begin{equation}
+\large
+\frac{}{0 \in S}
+\\[2em]
+\large
+\frac{n \in S}{n + 3 \in S}
+\end{equation}
+
+
+** Context-Free Grammars
+A grammar is context-free if the rules describing its syntax are sufficient to
+produce a valid instance. If other constraints (invariants) are required for
+correctness, we call it a context-sensitive grammar. For example, a binary
+search tree grammar is context sensitive, because the rules tell you only how to
+construct syntactic elements, they do not tell you that all left nodes must be
+less than right nodes. This extra invariant makes it context-sensitive.
+
+* Exercises
+
+** Exercise 1.1.3
+
+Apparently this boils down to the bottom-up style not implicitly enforcing "if
+and only if" in its rules for set inclusion. Interestingly, the top-down version
+(1.1.1 above) explicitly included this language in its definition. Also
+remarkable is the fact that rules of inference

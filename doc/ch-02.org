@@ -1,4 +1,6 @@
-#+title: Chapter 2 Written Exercises
+#+title: EOPL: Chapter 2 Notes & Exercises
+#+OPTIONS: toc:nil num:nil
+#+HTML_HEAD: <link rel="stylesheet" href="http://dakrone.github.io/org.css" type="text/css" />
 
 * Exercise 2.1
 
