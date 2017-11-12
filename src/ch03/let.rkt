@@ -4,7 +4,7 @@
 ;; LET Language
 ;; ============
 ;;
-;; The lexical rules defines the characters allowed to appear in the source
+;; The lexical rules define the characters allowed to appear in the source
 ;; code of a program. The lexical rules are used by SLLGEN to generate a scanner.
 ;; In the following grammar, Capitalized text represents a non-terminal, and lowercase
 ;; text and punctuation represent terminals.
