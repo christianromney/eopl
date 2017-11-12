@@ -70,13 +70,13 @@
   (lambda (ev)
     (cases expression-value ev
            (number-value (num) num)
-           (else (eopl:error "expression-value->integer only works with integer-values")))))
+           (else (eopl:error "expression-value->number only works with a number-value")))))
 
 (define expression-value->boolean
   (lambda (ev)
     (cases expression-value ev
            (boolean-value (bool) bool)
-           (else (eopl:error "expression-value->boolean only works with boolean-values")))))
+           (else (eopl:error "expression-value->boolean only works with a boolean-value")))))
 
 ;; -- expressions --
 
