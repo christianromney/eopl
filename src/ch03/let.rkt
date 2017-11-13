@@ -298,3 +298,10 @@
    "LET-LANG> "
    (lambda (pgm) (eval-program pgm))
    (sllgen:make-stream-parser lexical-rules grammar)))
+
+;; should evaluate to (4 (3))
+;; let x = 4
+;;       in cons(x,
+;;               cons(cons(-(x,1),
+;;                         emptylist),
+;; emptylist))
