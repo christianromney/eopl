@@ -50,7 +50,19 @@
   '((program (expression) a-program)
     (expression (number) constant-expression)
     (expression ("-" "(" expression "," expression ")") diff-expression)
+    (expression ("+" "(" expression "," expression ")") add-expression)
+    (expression ("*" "(" expression "," expression ")") mult-expression)
+    (expression ("/" "(" expression "," expression ")") quot-expression)
+    (expression ("minus" "(" expression ")") minus-expression)
     (expression ("zero?" "(" expression ")") zero?-expression)
+    (expression ("equal?" "(" expression "," expression ")") equal?-expression)
+    (expression ("greater?" "(" expression "," expression ")") greater?-expression)
+    (expression ("less?" "(" expression "," expression ")") less?-expression)
+    (expression ("emptylist") null-expression)
+    (expression ("null?" "(" expression ")") null?-expression)
+    (expression ("cons" "(" expression "," expression ")") cons-expression)
+    (expression ("car" "(" expression ")") car-expression)
+    (expression ("cdr" "(" expression ")") cdr-expression)
     (expression ("if" expresssion "then" expression "else" expression) if-expression)
     (expression (identifier) variable-expression)
     (expression ("let" identifier "=" expression "in" expression) let-expression)))
@@ -62,9 +74,16 @@
 
 ;; -- expression values --
 
+(define any?
+  (lambda (x)
+    #t))
+
 (define-datatype expression-value expression-value?
   (number-value (num number?))
-  (boolean-value (bool boolean?)))
+  (boolean-value (bool boolean?))
+  (null-value)
+  (pair-value (head any?)
+              (tail any?)))
 
 (define expression-value->number
   (lambda (ev)
@@ -78,13 +97,44 @@
            (boolean-value (bool) bool)
            (else (eopl:error "expression-value->boolean only works with a boolean-value")))))
 
+(define expression-value->null
+  (lambda (ev)
+    (cases expression-value ev
+           (null-value () '())
+           (else (eopl:error "expression-value->null only works with a null-value")))))
+
+(define expression-value->pair
+  (lambda (ev)
+    (cases expression-value ev
+           (pair-value (head tail) (cons head tail))
+           (else (eopl:error "expression-value->pair only works with a pair-value")))))
+
 ;; -- expressions --
 
 (define-datatype expression expression?
   (constant-expression [num number?])
+  (minus-expression [exp expression?])
   (diff-expression [exp1 expression?]
                    [exp2 expression?])
+  (add-expression [exp1 expression?]
+                  [exp2 expression?])
+  (mult-expression [exp1 expression?]
+                   [exp2 expression?])
+  (quot-expression [exp1 expression?]
+                   [exp2 expression?])
   (zero?-expression [exp expression?])
+  (equal?-expression [exp1 expression?]
+                     [exp2 expression?])
+  (greater?-expression [exp1 expression?]
+                       [exp2 expression?])
+  (less?-expression [exp1 expression?]
+                    [exp2 expression?])
+  (null-expression)
+  (null?-expression [exp expression?])
+  (cons-expression [exp1 expression?]
+                   [exp2 expression?])
+  (car-expression [exp expression?])
+  (cdr-expression [exp expression?])
   (if-expression [pred expression?]
                  [consequent expression?]
                  [alternative expression?])
@@ -133,6 +183,11 @@
            (variable-expression (var)
                                 (apply-environment env var))
 
+           (minus-expression (num)
+                             (let ([val (value-of num env)])
+                               (number-value
+                                (- 0 (expression-value->number val)))))
+
            (diff-expression (exp1 exp2)
                             (let ([val1 (value-of exp1 env)]
                                   [val2 (value-of exp2 env)])
@@ -140,10 +195,72 @@
                                (- (expression-value->number val1)
                                   (expression-value->number val2)))))
 
+           (add-expression (exp1 exp2)
+                           (let ([val1 (value-of exp1 env)]
+                                 [val2 (value-of exp2 env)])
+                             (number-value
+                              (+ (expression-value->number val1)
+                                 (expression-value->number val2)))))
+
+           (mult-expression (exp1 exp2)
+                            (let ([val1 (value-of exp1 env)]
+                                  [val2 (value-of exp2 env)])
+                              (number-value
+                               (* (expression-value->number val1)
+                                  (expression-value->number val2)))))
+
+           (quot-expression (exp1 exp2)
+                            (let ([val1 (value-of exp1 env)]
+                                  [val2 (value-of exp2 env)])
+                              (number-value
+                               (quotient (expression-value->number val1)
+                                         (expression-value->number val2)))))
+
            (zero?-expression (exp)
                              (if (zero? (expression-value->number (value-of exp env)))
                                  (boolean-value #t)
                                  (boolean-value #f)))
+
+           (equal?-expression (exp1 exp2)
+                              (let ([val1 (value-of exp1 env)]
+                                    [val2 (value-of exp2 env)])
+                                (boolean-value
+                                 (= (expression-value->number val1)
+                                    (expression-value->number val2)))))
+
+           (greater?-expression (exp1 exp2)
+                                (let ([val1 (value-of exp1 env)]
+                                      [val2 (value-of exp2 env)])
+                                  (boolean-value
+                                   (> (expression-value->number val1)
+                                      (expression-value->number val2)))))
+
+           (less?-expression (exp1 exp2)
+                             (let ([val1 (value-of exp1 env)]
+                                   [val2 (value-of exp2 env)])
+                               (boolean-value
+                                (< (expression-value->number val1)
+                                   (expression-value->number val2)))))
+
+           (null-expression () (null-value))
+
+           (null?-expression (exp)
+                             (let ([val (value-of exp env)])
+                               (boolean-value
+                                (cases expression-value val
+                                       (null-value () #t)
+                                       (else #f)))))
+
+           (cons-expression (exp1 exp2)
+                            (pair-value
+                             (value-of exp1 env)
+                             (value-of exp2 env)))
+
+           (car-expression (exp)
+                           (car (expression-value->pair (value-of exp env))))
+
+           (cdr-expression (exp)
+                           (cdr (expression-value->pair (value-of exp env))))
 
            (if-expression (pred conseq altern)
                           (if (expression-value->boolean (value-of pred env))
@@ -161,13 +278,19 @@
            (a-program (exp)
                       (value-of exp (empty-environment))))))
 
+(define unwrap
+  (lambda (val)
+    (cases expression-value val
+             (number-value (num) num)
+             (boolean-value (bool) bool)
+             (pair-value (head tail) (cons (unwrap head) (unwrap tail)))
+             (null-value () '()))))
+
 ;; Unwraps the final expressed value, returning a number or boolean
 (define eval-program
   (lambda (pgm)
     (let ([val (value-of-program pgm)])
-      (cases expression-value val
-             (number-value (num) num)
-             (boolean-value (bool) bool)))))
+      (unwrap val))))
 
 ;; A REPL for our language!
 (define repl
